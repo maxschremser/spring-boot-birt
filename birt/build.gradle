@@ -1,0 +1,18 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = "BirtProcessor"
+
+vsl {
+    env {
+        componentName = "BIRT Integration"
+    }
+}
+
+dependencies {
+    compile "org.eclipse.birt:birt-runtime:4.5.0"
+    compile(configuration: "runtime", group: "commons-io", name: "commons-io", version: "2.2")
+    compile(configuration: "runtime", group: "org.slf4j", name: "slf4j-api", version: "1.7.5")
+    compile(configuration: "runtime", group: "ch.qos.logback", name: "logback-classic", version: "1.0.13")
+    compile fileTree(dir: "/Users/AT003053/jDev/github/birt-integration/birt-runtime-4_5_0/ReportEngine", include: '**/*.jar')
+}
