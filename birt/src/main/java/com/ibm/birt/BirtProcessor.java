@@ -1,26 +1,30 @@
+package com.ibm.birt;
+
 import org.apache.commons.io.IOUtils;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.core.framework.Platform;
 import org.eclipse.birt.report.engine.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.util.Base64;
 
+@Component
 public class BirtProcessor {
     private static Logger log = LoggerFactory.getLogger(BirtProcessor.class);
+    private BirtConfiguration configuration;
 
-    public static void main(String[] args) throws Exception {
-        BirtProcessor.renderReport();
+    public BirtProcessor(BirtConfiguration configuration) throws BirtException, IOException, URISyntaxException {
+        this.configuration = configuration;
+        renderReport();
     }
 
-    public static void renderReport() throws BirtException, FileNotFoundException, IOException, URISyntaxException {
+    private void renderReport() throws BirtException, IOException, URISyntaxException {
         IReportEngine engine;
         EngineConfig config = new EngineConfig();
-        // System.setProperty("BIRT_HOME", "/Users/AT003053/jDev/github/birt-integration/birt-runtime-4_5_0/ReportEngine");
-        // config.setEngineHome("file:/Users/AT003053/jDev/github/birt-integration/birt-runtime-4_5_0/ReportEngine");
-
         Platform.startup(config);
 
         IReportEngineFactory factory = (IReportEngineFactory) Platform.createFactoryObject(IReportEngineFactory.EXTENSION_REPORT_ENGINE_FACTORY);
@@ -56,13 +60,14 @@ public class BirtProcessor {
         //Set rendering options - such as file or stream output,
         IRenderOption options;
         options = new HTMLRenderOption();
+        log.info("Output Format is: {}", configuration.outputFormat);
         options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_HTML);
-        ((HTMLRenderOption) options).setEmbeddable(false);
+//        ((HTMLRenderOption) options).setEmbeddable(false);
         options.setImageHandler(new HTMLServerImageHandler() {
             @Override
             protected String handleImage(IImage image, Object context, String prefix, boolean needMap) {
                 try {
-                    final String content = Base64.encode(IOUtils.toByteArray(image.getImageStream()));
+                    final String content = Base64.getEncoder().encodeToString(IOUtils.toByteArray(image.getImageStream()));
                     return "data:" + image.getMimeType() + ";base64," + content;
                 } catch (Exception ignore) {
                 }
@@ -75,8 +80,13 @@ public class BirtProcessor {
         task.run();
         task.close();
         log.info("finished");
-        // log.info(out.toString());
-        FileOutputStream fos = new FileOutputStream(new File("out", "test.html"));
+        log.debug(out.toString());
+
+        File f = new File("out", "test.html");
+        FileOutputStream fos = new FileOutputStream(f);
         fos.write(out.toByteArray());
+        fos.close();
+
+        log.info("Report has been rendered into {}", f.getAbsolutePath());
     }
 }

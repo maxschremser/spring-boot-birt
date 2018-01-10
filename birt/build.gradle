@@ -1,18 +1,40 @@
-apply plugin: 'java'
-apply plugin: 'application'
+buildscript {
+    ext {
+        springBootVersion = '2.0.0.M7'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
 
-mainClassName = "BirtProcessor"
-
-vsl {
-    env {
-        componentName = "BIRT Integration"
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
 
+
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'application'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+mainClassName = "com.ibm.birt.BirtApplication"
+
 dependencies {
-    compile "org.eclipse.birt:birt-runtime:4.5.0"
-    compile(configuration: "runtime", group: "commons-io", name: "commons-io", version: "2.2")
-    compile(configuration: "runtime", group: "org.slf4j", name: "slf4j-api", version: "1.7.5")
-    compile(configuration: "runtime", group: "ch.qos.logback", name: "logback-classic", version: "1.0.13")
-    compile fileTree(dir: "../birt-runtime-4_5_0/ReportEngine", include: '**/*.jar')
+    compile('org.springframework.boot:spring-boot-starter')
+    compile("commons-io:commons-io:2.6")
+    compile("org.slf4j:slf4j-api:1.7.25")
+//    compile("org.eclipse.birt.runtime:org.eclipse.birt.runtime:4.5.0") {
+//        exclude(group: "org.eclipse.birt.runtime", module: "org.eclipse.osgi")
+//    }
+//    compile("org.osgi:org.eclipse.osgi:3.10.100.v20150529-1857")
+//    compile("ch.qos.logback:logback-classic:1.0.13")
+    compile("com.github.lalyos:jfiglet:0.0.8")
+    compile(fileTree(dir: "../birt-runtime-4_5_0/ReportEngine", include: '**/*.jar'))
+    testCompile("junit:junit-dep:4.10")
 }
