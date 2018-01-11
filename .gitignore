@@ -11,6 +11,7 @@
 .settings
 .springBeans
 
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -20,7 +21,11 @@
 ### NetBeans ###
 nbproject/private/
 build/
+out/
 nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+Would skip repository birt-integration/
+birt/out/
+birt/src/test/resources/
