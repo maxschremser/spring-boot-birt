@@ -25,6 +25,24 @@ apply plugin: 'io.spring.dependency-management'
 
 mainClassName = "com.ibm.birt.BirtApplication"
 
+group = 'com.ibm.birt'
+version = '0.0.1'
+
+jar {
+    manifest {
+        attributes(
+                'Implementation-Vendor': 'IBM Corp.',
+                'Artifact-Name': 'Birt Engine',
+                'Group': group,
+                'Module': project.name,
+                'Version':version,
+                'Main-Class': mainClassName,
+                'Class-Path': (configurations.runtime.dependencies.collect() + jar.archivePath).join(' ')
+
+        )
+    }
+}
+
 dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     compile("commons-io:commons-io:2.6")

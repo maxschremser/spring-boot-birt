@@ -60,7 +60,7 @@ public class BirtProcessor {
         //Set rendering options - such as file or stream output,
         IRenderOption options;
         options = new HTMLRenderOption();
-        log.info("Output Format is: {}", configuration.outputFormat);
+        log.info("Output Format is: {}", configuration.getOutputFormat());
         options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_HTML);
 //        ((HTMLRenderOption) options).setEmbeddable(false);
         options.setImageHandler(new HTMLServerImageHandler() {
@@ -79,10 +79,10 @@ public class BirtProcessor {
         task.setErrorHandlingOption(IEngineTask.CANCEL_ON_ERROR);
         task.run();
         task.close();
-        log.info("finished");
         log.debug(out.toString());
 
-        File f = new File("out", "test.html");
+        log.info("Output Path is: {}/{}", configuration.getOutputPath());
+        File f = new File(configuration.getOutputPath(), configuration.getOutputFile());
         FileOutputStream fos = new FileOutputStream(f);
         fos.write(out.toByteArray());
         fos.close();
