@@ -6,6 +6,101 @@
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.simplelisting</property>
     <property name="bidiLayoutOrientation">ltr</property>
     <property name="imageDPI">120</property>
+    <parameters>
+        <scalar-parameter name="dataSet" id="237">
+            <text-property name="helpText">{"firstname":"Matt", lastname:"Groening", company:"Netflix"}</text-property>
+            <text-property name="promptText">JSON DataSet</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">{"firstname":"Bart", "lastname":"Simpson", "company":"School"}</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="dataSource" id="230">
+            <method name="open"><![CDATA[dataSource = {"firstname": "Matt", "lastname": "Groening", "company": "Netflix"};
+moreData = true]]></method>
+            <method name="close"><![CDATA[dataSource = null;]]></method>
+        </script-data-source>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="231">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">firstname</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">lastname</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">company</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">firstname</property>
+                    <text-property name="displayName">First Name</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">lastname</property>
+                    <text-property name="displayName">Last Name</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">company</property>
+                    <text-property name="displayName">Company</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">firstname</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">lastname</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">company</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <method name="onFetch"><![CDATA[dataSetRow["firstname"] = "Matt";
+dataSetRow["lastname"] = "Groening";
+dataSetRow["company"] = "Netflix";
+return true;]]></method>
+            <property name="dataSource">dataSource</property>
+            <method name="open"><![CDATA[moreData = true;]]></method>
+            <method name="fetch"><![CDATA[if (!moreData)
+  return false;
+
+row["firstname"] = dataSource.firstname;
+row["lastname"] = dataSource.lastname;
+row["company"] = dataSource.company;
+
+moreData = false;
+return true;]]></method>
+            <method name="close"><![CDATA[moreData = false;]]></method>
+        </script-data-set>
+    </data-sets>
     <styles>
         <style name="report" id="24">
             <property name="fontFamily">sans-serif</property>
@@ -27,6 +122,20 @@ Watson Sentiment Analysis
     </page-setup>
     <body>
         <grid id="66">
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <expression name="expression" type="javascript">"last" + 2 + "name"</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Calculated Value</property>
+                    <expression name="expression" type="javascript">"Maxi"</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
             <column id="67"/>
             <row id="68">
                 <cell id="69">
@@ -41,64 +150,95 @@ Watson Sentiment Analysis
                         <property name="fontWeight">bold</property>
                         <property name="fontStyle">normal</property>
                         <property name="textAlign">center</property>
-                        <text-property name="text">Sentiment Analysis using Twitter 2017/12/29</text-property>
+                        <text-property name="text">Scripted Data Set: dataSet</text-property>
                     </label>
                 </cell>
             </row>
             <row id="70">
                 <cell id="71">
-                    <grid id="198">
-                        <column id="199"/>
-                        <column id="200"/>
-                        <row id="201">
-                            <cell id="202">
-                                <label id="211">
+                    <grid id="259">
+                        <column id="260"/>
+                        <column id="262"/>
+                        <row id="263">
+                            <cell id="264">
+                                <label id="275">
                                     <property name="fontSize">medium</property>
                                     <property name="fontWeight">normal</property>
                                     <property name="fontStyle">normal</property>
                                     <property name="textAlign">left</property>
-                                    <text-property name="text">RIENSHNA</text-property>
+                                    <text-property name="text">First Name</text-property>
                                 </label>
                             </cell>
-                            <cell id="203">
+                            <cell id="266">
                                 <property name="fontSize">medium</property>
+                                <data id="309">
+                                    <property name="dataSet">dataSet</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">lastname</property>
+                                            <text-property name="displayName">First Name</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["firstname"]</expression>
+                                            <property name="dataType">string</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">lastname</property>
+                                </data>
                             </cell>
                         </row>
-                        <row id="204">
-                            <cell id="205">
-                                <label id="212">
+                        <row id="267">
+                            <cell id="268">
+                                <label id="277">
                                     <property name="fontSize">medium</property>
                                     <property name="fontWeight">normal</property>
                                     <property name="fontStyle">normal</property>
                                     <property name="textAlign">left</property>
-                                    <text-property name="text">RIENTYNA</text-property>
+                                    <text-property name="text">Last Name</text-property>
                                 </label>
                             </cell>
-                            <cell id="206"/>
-                        </row>
-                        <row id="207">
-                            <cell id="208">
-                                <label id="213">
-                                    <property name="fontSize">medium</property>
-                                    <property name="fontWeight">normal</property>
-                                    <property name="fontStyle">normal</property>
-                                    <property name="textAlign">left</property>
-                                    <text-property name="text">ROGTY</text-property>
-                                </label>
-                            </cell>
-                            <cell id="209">
+                            <cell id="270">
                                 <property name="fontSize">medium</property>
+                                <data id="307">
+                                    <property name="dataSet">dataSet</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">lastname</property>
+                                            <text-property name="displayName">Last Name</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["lastname"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">lastname</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="271">
+                            <cell id="272">
+                                <label id="276">
+                                    <property name="fontSize">medium</property>
+                                    <property name="fontWeight">normal</property>
+                                    <property name="fontStyle">normal</property>
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">Company</text-property>
+                                </label>
+                            </cell>
+                            <cell id="274">
+                                <property name="fontSize">medium</property>
+                                <data id="308">
+                                    <property name="dataSet">dataSet</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">company</property>
+                                            <text-property name="displayName">Company</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["company"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">company</property>
+                                </data>
                             </cell>
                         </row>
                     </grid>
-                    <label id="218">
-                        <property name="fontSize">large</property>
-                        <property name="fontWeight">bold</property>
-                        <property name="fontStyle">normal</property>
-                        <property name="paddingTop">20pt</property>
-                        <property name="textAlign">center</property>
-                        <text-property name="text"> </text-property>
-                    </label>
                 </cell>
             </row>
             <row id="72">
@@ -108,102 +248,121 @@ Watson Sentiment Analysis
                         <property name="fontWeight">bold</property>
                         <property name="fontStyle">normal</property>
                         <property name="textAlign">center</property>
-                        <text-property name="text">דםצק יק׳נרק׳ אקסא כםר יאצך ןמפוא םםואפוא</text-property>
+                        <text-property name="text"> </text-property>
+                    </label>
+                    <label id="311">
+                        <property name="fontSize">large</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="fontStyle">normal</property>
+                        <property name="textAlign">center</property>
+                        <text-property name="text">שָׁלוֹם Peace سلم سلام</text-property>
+                    </label>
+                    <label id="310">
+                        <property name="fontSize">large</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="fontStyle">normal</property>
+                        <property name="textAlign">center</property>
+                        <text-property name="text"> </text-property>
+                    </label>
+                    <label id="257">
+                        <property name="fontSize">large</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="fontStyle">normal</property>
+                        <property name="textAlign">center</property>
+                        <text-property name="text">Report Parameter: dataSet</text-property>
                     </label>
                 </cell>
             </row>
         </grid>
-        <grid id="154">
-            <column id="155"/>
-            <column id="156"/>
-            <column id="157"/>
-            <row id="158">
-                <cell id="159">
-                    <label id="178">
-                        <property name="fontSize">large</property>
-                        <property name="fontWeight">bold</property>
+        <grid id="238">
+            <column id="239"/>
+            <column id="240"/>
+            <row id="241">
+                <cell id="242">
+                    <label id="243">
+                        <property name="fontSize">medium</property>
+                        <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
-                        <property name="textAlign">center</property>
-                        <text-property name="text">Date</text-property>
+                        <property name="textAlign">left</property>
+                        <text-property name="text">First Name</text-property>
                     </label>
                 </cell>
-                <cell id="160">
-                    <label id="179">
-                        <property name="fontSize">large</property>
-                        <property name="fontWeight">bold</property>
-                        <property name="fontStyle">normal</property>
-                        <property name="textAlign">center</property>
-                        <text-property name="text">Score</text-property>
-                    </label>
-                </cell>
-                <cell id="161">
-                    <label id="180">
-                        <property name="fontSize">large</property>
-                        <property name="fontWeight">bold</property>
-                        <property name="fontStyle">normal</property>
-                        <property name="textAlign">center</property>
-                        <text-property name="text">Sentiment</text-property>
-                    </label>
+                <cell id="244">
+                    <property name="fontSize">medium</property>
+                    <data id="283">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">dataSet</property>
+                                <text-property name="displayName">First Name</text-property>
+                                <expression name="expression" type="javascript">JSON.parse(params["dataSet"]).firstname</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">false</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">dataSet</property>
+                    </data>
                 </cell>
             </row>
-            <row id="162">
-                <cell id="163"/>
-                <cell id="164"/>
-                <cell id="165"/>
+            <row id="246">
+                <cell id="247">
+                    <label id="258">
+                        <property name="fontSize">medium</property>
+                        <property name="fontWeight">normal</property>
+                        <property name="fontStyle">normal</property>
+                        <property name="textAlign">left</property>
+                        <text-property name="text">Last Name</text-property>
+                    </label>
+                </cell>
+                <cell id="249">
+                    <property name="fontSize">medium</property>
+                    <data id="285">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">dataSet</property>
+                                <text-property name="displayName">Last Name</text-property>
+                                <expression name="expression" type="javascript">JSON.parse(params["dataSet"]).lastname</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">false</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">dataSet</property>
+                    </data>
+                </cell>
             </row>
-            <row id="166">
-                <cell id="167"/>
-                <cell id="168"/>
-                <cell id="169"/>
-            </row>
-            <row id="170">
-                <cell id="171"/>
-                <cell id="172"/>
-                <cell id="173"/>
-            </row>
-            <row id="174">
-                <cell id="175"/>
-                <cell id="176"/>
-                <cell id="177"/>
+            <row id="251">
+                <cell id="252">
+                    <label id="253">
+                        <property name="fontSize">medium</property>
+                        <property name="fontWeight">normal</property>
+                        <property name="fontStyle">normal</property>
+                        <property name="textAlign">left</property>
+                        <text-property name="text">Company</text-property>
+                    </label>
+                </cell>
+                <cell id="254">
+                    <property name="fontSize">medium</property>
+                    <data id="286">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">dataSet</property>
+                                <text-property name="displayName">Company</text-property>
+                                <expression name="expression" type="javascript">JSON.parse(params["dataSet"]).company</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">false</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">dataSet</property>
+                    </data>
+                </cell>
             </row>
         </grid>
-        <label id="219">
-            <property name="fontSize">large</property>
-            <property name="fontWeight">bold</property>
-            <property name="fontStyle">normal</property>
-            <property name="paddingTop">20pt</property>
-            <property name="textAlign">center</property>
-            <text-property name="text"> </text-property>
-        </label>
-        <label id="226">
-            <property name="fontSize">large</property>
-            <property name="fontWeight">bold</property>
-            <property name="fontStyle">normal</property>
-            <property name="textAlign">center</property>
-            <text-property name="text">Json Posts</text-property>
-        </label>
-        <label id="220">
-            <property name="fontSize">large</property>
-            <property name="fontWeight">bold</property>
-            <property name="fontStyle">normal</property>
-            <property name="textAlign">center</property>
-            <text-property name="text">Json Quest</text-property>
-        </label>
-        <label id="222">
-            <property name="fontSize">large</property>
-            <property name="fontWeight">bold</property>
-            <property name="fontStyle">normal</property>
-            <property name="textAlign">center</property>
-            <text-property name="text">Json Test</text-property>
-        </label>
-        <label id="196">
-            <property name="fontSize">large</property>
-            <property name="fontWeight">bold</property>
-            <property name="fontStyle">normal</property>
-            <property name="textAlign">center</property>
-            <text-property name="text">Json Response</text-property>
-        </label>
     </body>
+    <property name="pageVariables">
+        <variable-element name="dataSetRow">
+            <expression name="value" type="javascript">new Object()</expression>
+            <property name="type">report</property>
+        </variable-element>
+    </property>
     <list-property name="images">
         <structure>
             <property name="name">IBM-Watson.png</property>

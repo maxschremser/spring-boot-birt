@@ -8,7 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Base64;
 
@@ -32,7 +35,7 @@ public class BirtProcessor {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        IReportRunnable design = engine.openReportDesign("RT001", new FileInputStream(new File(BirtProcessor.class.getClassLoader().getResource("simple.rptdesign").toURI())));
+        IReportRunnable design = engine.openReportDesign("RT001", new FileInputStream(configuration.getReportFile()));
         IRunAndRenderTask task = engine.createRunAndRenderTask(design);
         IGetParameterDefinitionTask paramTask = engine.createGetParameterDefinitionTask(design);
         for (Object o : paramTask.getParameterDefns(false)) {
@@ -41,7 +44,7 @@ public class BirtProcessor {
                 continue; //only process scalar parameters
             }
             String paramName = rptParam.getName();
-            String paramValue = null;
+            String paramValue = configuration.getFieldValueByName(paramName);
 
             if (paramValue != null) {
                 task.setParameterValue(paramName, paramValue);
@@ -49,9 +52,9 @@ public class BirtProcessor {
                 if (paramName.contains("pwd")) {
                     paramValueLog = "*****";
                 }
-                log.info("ReportParam {} resolved to {}", paramName, paramValueLog);
+                log.info("ReportParam: {} resolved to: {}", paramName, paramValueLog);
             } else {
-                log.info("ReportParam {} cannot be resolved", paramName);
+                log.info("ReportParam: {} cannot be resolved", paramName);
             }
         }
 
@@ -77,16 +80,15 @@ public class BirtProcessor {
         options.setOutputStream(out);
         task.setRenderOption(options);
         task.setErrorHandlingOption(IEngineTask.CANCEL_ON_ERROR);
-        task.run();
+        task.run(); // Run the Render Task
         task.close();
         log.debug(out.toString());
 
-        log.info("Output Path is: {}/{}", configuration.getOutputPath());
-        File f = new File(configuration.getOutputPath(), configuration.getOutputFile());
-        FileOutputStream fos = new FileOutputStream(f);
+        log.info("Output Path is: {}", configuration.getOutputFile());
+        FileOutputStream fos = new FileOutputStream(configuration.getOutputFile());
         fos.write(out.toByteArray());
         fos.close();
 
-        log.info("Report has been rendered into {}", f.getAbsolutePath());
+        log.info("Report has been rendered into {}", configuration.getOutputFile().getAbsolutePath());
     }
 }
