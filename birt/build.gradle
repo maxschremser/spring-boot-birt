@@ -1,3 +1,9 @@
+import javax.swing.text.MutableAttributeSet
+import javax.swing.text.html.HTML
+import javax.swing.text.html.HTMLEditorKit
+import javax.swing.text.html.parser.ParserDelegator
+import java.util.jar.JarFile
+
 buildscript {
     ext {
         springBootVersion = '2.0.0.M7'
@@ -13,7 +19,6 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
-
 
 apply plugin: 'idea'
 apply plugin: 'eclipse'
@@ -35,7 +40,7 @@ jar {
                 'Artifact-Name': 'Birt Engine',
                 'Group': group,
                 'Module': project.name,
-                'Version':version,
+                'Version': version,
                 'Main-Class': mainClassName,
                 'Class-Path': (configurations.runtime.dependencies.collect() + jar.archivePath).join(' ')
 
@@ -45,14 +50,62 @@ jar {
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter')
-    compile("commons-io:commons-io:2.6")
-    compile("org.slf4j:slf4j-api:1.7.25")
-//    compile("org.eclipse.birt.runtime:org.eclipse.birt.runtime:4.5.0") {
-//        exclude(group: "org.eclipse.birt.runtime", module: "org.eclipse.osgi")
-//    }
-//    compile("org.osgi:org.eclipse.osgi:3.10.100.v20150529-1857")
-//    compile("ch.qos.logback:logback-classic:1.0.13")
-    compile("com.github.lalyos:jfiglet:0.0.8")
     compile(fileTree(dir: "../birt-runtime-4_5_0/ReportEngine", include: '**/*.jar'))
+    testCompile("com.github.lalyos:jfiglet:0.0.8")
     testCompile("junit:junit-dep:4.10")
+}
+
+task grepLicenses {
+    dependsOn(clean)
+    doLast {
+        configurations.runtime.each { jar ->
+            println "- ${jar.name}"
+            def jarFile = new JarFile(jar)
+            jarFile.entries().each { jarEntry ->
+                if (jarEntry =~ /(?i)license.*/) {
+                    println " > $jarEntry.name"
+                    def f = new File("${project.buildDir}/LICENSES", "LICENSE.${jar.name.substring(0, (jar.name.length() - 4))}.txt")
+                    f.parentFile.mkdirs()
+                    if (!f.exists())
+                        f.createNewFile()
+
+                    def fr = new InputStreamReader(jarFile.getInputStream(jarEntry))
+                    if (jarEntry =~ /.*\.html/) {
+                        def sb = new StringBuffer()
+                        def isNewline = false
+                        def isStarted = false
+                        def cb = new HTMLEditorKit.ParserCallback() {
+                            @Override
+                            void handleStartTag(HTML.Tag t, MutableAttributeSet a, int pos) {
+                                if (!isNewline)
+                                    isNewline = (t ==~ /(?i)p|br|h1|h2|h3|h4|h5|h6|pre/)
+                                if (!isStarted) {
+                                    isStarted = (t ==~ /(?i)body/)
+                                }
+                            }
+
+                            @Override
+                            void handleText(char[] data, int pos) {
+                                if (isStarted) {
+                                    def sData = new String(data)
+                                    sData = isNewline ? sprintf("%n%s", sData) : sprintf(sData)
+                                    sb.append(sData)
+                                    isNewline = false
+                                }
+                            }
+                        }
+                        new ParserDelegator().parse(fr, cb, true)
+                        sb.append(sprintf("%n%n"))
+                        f.text += sb.toString()
+                    } else {
+                        f.text += fr.text
+                    }
+                }
+            }
+        }
+        project.copy() {
+            from "${project.buildDir}/LICENSES"
+            into "${project.rootDir}/LICENSES"
+        }
+    }
 }
