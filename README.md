@@ -8,6 +8,15 @@ If you have Gradle installed you can run the **run** task without the wrapper.
 gradlew run
 ```
 
+Alternatively you can create an uber-jar using the task **installBootDist**.
+```gradle
+gradlew installBootDist
+```
+and run the report application using the *~/birt/build/install/birt-boot/bin/birt* script.
+
+You can even execute the jar: ```java -jar birt-0.0.1.jar``` from either
+*~/birt/build/install/birt/lib* or *~/birt/build/install/birt-boot/lib* directory.
+
 ## Birt Report (simple.rptdesign)
 You can run the Report from within Birt Designer using the Default values. When running the spring boot application the
 report parameters are taken from the **birt.properties** file.

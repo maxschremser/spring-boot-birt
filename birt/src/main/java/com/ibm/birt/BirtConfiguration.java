@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 @Configuration
 @PropertySource({"classpath:birt.properties"})
@@ -31,18 +34,20 @@ public class BirtConfiguration {
     }
 
     public File getOutputFile() {
+        //noinspection ResultOfMethodCallIgnored
+        outputFile.getParentFile().mkdirs();
         return outputFile;
     }
 
-    public File getReportFile() {
+    public InputStream getReportFile() throws FileNotFoundException {
         if (reportFile.startsWith("classpath:")) {
             try {
-                return new File(BirtConfiguration.class.getClassLoader().getResource(reportFile.substring(10)).toURI());
+                return BirtConfiguration.class.getClassLoader().getResourceAsStream(reportFile.substring(10));
             } catch (Exception e) {
                 log.warn(e.getMessage(), e);
             }
         }
-        return new File(reportFile);
+        return new FileInputStream(new File(reportFile));
     }
 
     public String getDataSet() {

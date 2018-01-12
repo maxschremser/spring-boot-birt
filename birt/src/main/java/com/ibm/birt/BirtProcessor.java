@@ -35,7 +35,7 @@ public class BirtProcessor {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        IReportRunnable design = engine.openReportDesign("RT001", new FileInputStream(configuration.getReportFile()));
+        IReportRunnable design = engine.openReportDesign("RT001", configuration.getReportFile());
         IRunAndRenderTask task = engine.createRunAndRenderTask(design);
         IGetParameterDefinitionTask paramTask = engine.createGetParameterDefinitionTask(design);
         for (Object o : paramTask.getParameterDefns(false)) {
@@ -84,7 +84,8 @@ public class BirtProcessor {
         task.close();
         log.debug(out.toString());
 
-        log.info("Output Path is: {}", configuration.getOutputFile());
+        //noinspection ResultOfMethodCallIgnored
+        configuration.getOutputFile().createNewFile();
         FileOutputStream fos = new FileOutputStream(configuration.getOutputFile());
         fos.write(out.toByteArray());
         fos.close();
