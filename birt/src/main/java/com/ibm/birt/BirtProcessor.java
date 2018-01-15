@@ -20,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.core.framework.Platform;
 import org.eclipse.birt.report.engine.api.*;
+import org.eclipse.birt.report.engine.api.impl.ParameterValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
+import java.util.List;
 
 @Component
 public class BirtProcessor {
@@ -58,7 +60,7 @@ public class BirtProcessor {
                 continue; //only process scalar parameters
             }
             String paramName = rptParam.getName();
-            String paramValue = configuration.getProperties().getReport().getParam().getDataset();
+            String paramValue = configuration.getProperties().getReport().getParams().get(paramName);
 
             if (paramValue != null) {
                 task.setParameterValue(paramName, paramValue);
@@ -66,9 +68,10 @@ public class BirtProcessor {
                 if (paramName.contains("pwd")) {
                     paramValueLog = "*****";
                 }
-                log.info("ReportParam: {} resolved to: {}", paramName, paramValueLog);
+                log.info("ReportParam: {}={}", paramName, paramValueLog);
             } else {
-                log.info("ReportParam: {} cannot be resolved", paramName);
+                log.error("ReportParam: '{}' cannot be resolved", paramName);
+                throw new ParameterValidationException(new BirtException("Report Parameter '" + paramName + "' cannot be resolved."));
             }
         }
 
@@ -96,6 +99,10 @@ public class BirtProcessor {
         task.setErrorHandlingOption(IEngineTask.CANCEL_ON_ERROR);
         task.run(); // Run the Render Task
         task.close();
+        List errors = task.getErrors();
+        for (Object error : errors) {
+            log.error(error.toString());
+        }
         log.debug(out.toString());
 
         //noinspection ResultOfMethodCallIgnored

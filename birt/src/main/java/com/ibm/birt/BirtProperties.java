@@ -22,10 +22,11 @@ import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.annotation.Validated;
-
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 @ConfigurationProperties(prefix = "birt")
 @Getter
@@ -67,11 +68,12 @@ public class BirtProperties {
         @Valid
         private Param param;
 
+        private Map<String,String> params = new HashMap<>();
+
         @Getter
         @Setter
         @ToString
         public static class Param {
-
             /**
              * firstname for the dataset
              */
@@ -84,12 +86,6 @@ public class BirtProperties {
              * company for the dataset
              */
             private String company;
-            /**
-             * the birt report parameter "dataSet"
-             */
-            @Pattern(regexp = "\\{ \"firstname\": \".*\", \"lastname\": \".*\", \"company\": \".*\" \\}")
-            private String dataset;
-
         }
     }
 
