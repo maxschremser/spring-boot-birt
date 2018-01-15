@@ -1,3 +1,19 @@
+/*
+ *   Copyright 2018 Maximilian Schremser
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+
 import javax.swing.text.MutableAttributeSet
 import javax.swing.text.html.HTML
 import javax.swing.text.html.HTMLEditorKit
@@ -13,10 +29,12 @@ buildscript {
         jcenter()
         maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/plugins-release" }
 
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("io.spring.gradle:propdeps-plugin:0.0.10.RELEASE")
     }
 }
 
@@ -25,6 +43,8 @@ apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'application'
+apply plugin: 'propdeps'
+apply plugin: 'propdeps-idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
@@ -50,10 +70,18 @@ jar {
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter')
+    compile('org.springframework.boot:spring-boot-starter-validation')
     compile(fileTree(dir: "../birt-runtime-4_5_0/ReportEngine", include: '**/*.jar'))
+    compile("org.springframework.boot:spring-boot-configuration-processor")
+    compile("org.projectlombok:lombok:1.16.18")
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile("com.github.lalyos:jfiglet:0.0.8")
     testCompile("junit:junit-dep:4.10")
+
 }
+
+compileJava.dependsOn(processResources)
 
 task grepLicenses {
     dependsOn(clean)

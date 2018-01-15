@@ -1,5 +1,3 @@
-package com.ibm.birt;
-
 /*
  *   Copyright 2018 Maximilian Schremser
  *
@@ -16,6 +14,8 @@ package com.ibm.birt;
  *   limitations under the License.
  */
 
+package com.ibm.birt;
+
 import org.apache.commons.io.IOUtils;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.core.framework.Platform;
@@ -25,10 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.util.Base64;
 
 @Component
@@ -36,12 +35,11 @@ public class BirtProcessor {
     private static Logger log = LoggerFactory.getLogger(BirtProcessor.class);
     private BirtConfiguration configuration;
 
-    public BirtProcessor(BirtConfiguration configuration) throws BirtException, IOException, URISyntaxException {
+    public BirtProcessor(BirtConfiguration configuration) {
         this.configuration = configuration;
-        renderReport();
     }
 
-    private void renderReport() throws BirtException, IOException, URISyntaxException {
+    public void renderReport() throws BirtException, IOException {
         IReportEngine engine;
         EngineConfig config = new EngineConfig();
         Platform.startup(config);
@@ -51,7 +49,7 @@ public class BirtProcessor {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        IReportRunnable design = engine.openReportDesign("RT001", configuration.getReportFile());
+        IReportRunnable design = engine.openReportDesign("RT001", getInputStream());
         IRunAndRenderTask task = engine.createRunAndRenderTask(design);
         IGetParameterDefinitionTask paramTask = engine.createGetParameterDefinitionTask(design);
         for (Object o : paramTask.getParameterDefns(false)) {
@@ -60,7 +58,7 @@ public class BirtProcessor {
                 continue; //only process scalar parameters
             }
             String paramName = rptParam.getName();
-            String paramValue = configuration.getFieldValueByName(paramName);
+            String paramValue = configuration.getProperties().getReport().getParam().getDataset();
 
             if (paramValue != null) {
                 task.setParameterValue(paramName, paramValue);
@@ -79,7 +77,7 @@ public class BirtProcessor {
         //Set rendering options - such as file or stream output,
         IRenderOption options;
         options = new HTMLRenderOption();
-        log.info("Output Format is: {}", configuration.getOutputFormat());
+        log.debug("Output Format is: {}", configuration.getProperties().getOutputFormat());
         options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_HTML);
 //        ((HTMLRenderOption) options).setEmbeddable(false);
         options.setImageHandler(new HTMLServerImageHandler() {
@@ -101,11 +99,17 @@ public class BirtProcessor {
         log.debug(out.toString());
 
         //noinspection ResultOfMethodCallIgnored
-        configuration.getOutputFile().createNewFile();
-        FileOutputStream fos = new FileOutputStream(configuration.getOutputFile());
+        configuration.getProperties().getOutputFile().createNewFile();
+        FileOutputStream fos = new FileOutputStream(configuration.getProperties().getOutputFile());
         fos.write(out.toByteArray());
         fos.close();
 
-        log.info("Report has been rendered into {}", configuration.getOutputFile().getAbsolutePath());
+        log.info("Report has been rendered to {}", configuration.getProperties().getOutputFile().getAbsolutePath());
     }
+
+    public InputStream getInputStream() throws IOException {
+        return configuration.getProperties().getReport().getFile().getInputStream();
+    }
+
+
 }

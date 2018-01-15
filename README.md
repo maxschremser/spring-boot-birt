@@ -17,6 +17,37 @@ and run the report application using the *~/birt/build/install/birt-boot/bin/bir
 You can even execute the jar: ```java -jar birt-0.0.1.jar``` from either
 *~/birt/build/install/birt/lib* or *~/birt/build/install/birt-boot/lib* directory.
 
+Overwrite the bundled properties in one of the following ways as described in the 
+Spring.io [documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html):
+
+- Environment Variable
+```gradle
+BIRT_REPORT_PARAM_DATASET='{ "firstname": "Max", "lastname": "Schremser", "company": "Microsoft" }' java -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar
+```
+- Java System Property
+```gradle
+java -Dbirt.report.param.dataset='{ "firstname": "Max", "lastname": "Schremser", "company": "Amazon" }' -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar
+```
+
+- Command line argument
+```gradle
+java -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar --birt.report.param.dataset='{ "firstname": "Max", "lastname": "Schremser", "company": "Google" }'
+```
+
+- External Properties file
+```gradle
+java -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar --spring.config.name=ms
+```
+
+or any different environment.
+
+Instead of setting the report parameter **dataset** in JSON format, the parameters for **firstname**, **lastname**
+and **company** can be set to form the JSON object.
+```gradle
+gradlew -Dbirt.report.param.firstname=Max -Dbirt.report.param.lastname=Schremser -Dbirt.report.param.company=IBM run
+```
+
+
 ## Birt Report (simple.rptdesign)
 You can run the Report from within Birt Designer using the Default values. When running the spring boot application the
 report parameters are taken from the **birt.properties** file.
