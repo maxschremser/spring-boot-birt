@@ -16,14 +16,18 @@
 
 package com.ibm.birt;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,14 +36,19 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
+@Slf4j
 @Validated
 public class BirtProperties {
+    public enum OutputFormat {
+        HTML,
+        PDF,
+        MS_WORD;
+    }
+
     /**
      * the format of the rendered report
      */
-    @NotNull
-    @NotEmpty
-    private String outputFormat;
+    private OutputFormat outputFormat;
 
     /**
      * the path where the report will be rendered to
@@ -68,7 +77,7 @@ public class BirtProperties {
         @Valid
         private Param param;
 
-        private Map<String,String> params = new HashMap<>();
+        private Map<String, String> params = new HashMap<>();
 
         @Getter
         @Setter

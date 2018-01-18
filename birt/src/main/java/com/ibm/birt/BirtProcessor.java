@@ -25,10 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Base64;
 import java.util.List;
 
@@ -79,10 +76,26 @@ public class BirtProcessor {
 
         //Set rendering options - such as file or stream output,
         IRenderOption options;
-        options = new HTMLRenderOption();
-        log.debug("Output Format is: {}", configuration.getProperties().getOutputFormat());
-        options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_HTML);
-//        ((HTMLRenderOption) options).setEmbeddable(false);
+        log.info("Output Format is: {}", configuration.getProperties().getOutputFormat());
+        switch (configuration.getProperties().getOutputFormat()) {
+            case HTML:
+                options = new HTMLRenderOption();
+                options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_HTML);
+                break;
+            case PDF:
+                options = new PDFRenderOption();
+                options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
+                break;
+            case MS_WORD:
+                options = new DocxRenderOption();
+                options.setOutputFormat("docx");
+                break;
+            default:
+                options = new RenderOption();
+//                options.setOutputFormat("txt");
+                break;
+        }
+        options.setOutputStream(out);
         options.setImageHandler(new HTMLServerImageHandler() {
             @Override
             protected String handleImage(IImage image, Object context, String prefix, boolean needMap) {
@@ -94,7 +107,6 @@ public class BirtProcessor {
                 return "";
             }
         });
-        options.setOutputStream(out);
         task.setRenderOption(options);
         task.setErrorHandlingOption(IEngineTask.CANCEL_ON_ERROR);
         task.run(); // Run the Render Task
@@ -106,16 +118,28 @@ public class BirtProcessor {
         log.debug(out.toString());
 
         //noinspection ResultOfMethodCallIgnored
-        configuration.getProperties().getOutputFile().createNewFile();
-        FileOutputStream fos = new FileOutputStream(configuration.getProperties().getOutputFile());
+        File outputFile = configuration.getProperties().getOutputFile();
+        if (!outputFile.getName().matches("^.*\\.[html|htm|pdf|txt|doc|docx]$"))
+            outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(configuration.getProperties().getOutputFormat()));
+        outputFile.createNewFile();
+        FileOutputStream fos = new FileOutputStream(outputFile);
         fos.write(out.toByteArray());
         fos.close();
 
-        log.info("Report has been rendered to {}", configuration.getProperties().getOutputFile().getAbsolutePath());
+        log.info("Report has been rendered to {}", outputFile.getAbsolutePath());
     }
 
     public InputStream getInputStream() throws IOException {
         return configuration.getProperties().getReport().getFile().getInputStream();
+    }
+
+    private String getFileEnding(BirtProperties.OutputFormat outputFormat) {
+        switch (outputFormat) {
+            case HTML: return "html";
+            case PDF: return "pdf";
+            case MS_WORD: return "docx";
+            default: return "txt";
+        }
     }
 
 
