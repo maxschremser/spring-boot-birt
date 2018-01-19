@@ -1,6 +1,10 @@
 # birt-integration
 A simple BIRT Rendition Engine
 
+[![CircleCI](https://img.shields.io/circleci/project/github/RedSparr0w/node-csgo-parser.svg)]()
+[![GitHub issues](https://img.shields.io/github/issues/maxschremser/spring-boot-birt.svg)](https://github.com/maxschremser/spring-boot-birt/issues)
+[![GitHub license](https://img.shields.io/github/license/maxschremser/spring-boot-birt.svg)](https://github.com/maxschremser/spring-boot-birt/blob/master/LICENSE)
+
 ## Run the Application
 To run the applicatin, use the gradle wrapper (gradlew), which will download a Gradle Runtime and start the **run** task.
 If you have Gradle installed you can run the **run** task without the wrapper.
