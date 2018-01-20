@@ -24,9 +24,6 @@ import static junit.framework.Assert.assertNotNull;
 
 class AbstractRenderer {
 
-    public AbstractRenderer() {
-    }
-
     void renderOutputFormat(IRenderer renderer, BirtConfiguration configuration, BirtProperties.OutputFormat outputFormat) throws Exception {
         // overwrite output-format property
         configuration.getProperties().setOutputFormat(outputFormat);

@@ -41,7 +41,6 @@ import static junit.framework.Assert.assertTrue;
                 "birt.report.param.company=JUnit"
         })
 @RunWith(SpringRunner.class)
-
 public class TestFlexRenderer extends AbstractRenderer {
 
     @Autowired
