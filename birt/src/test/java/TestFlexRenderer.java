@@ -40,8 +40,12 @@ import static junit.framework.Assert.assertTrue;
                 "birt.report.param.lastname=Tester",
                 "birt.report.param.company=JUnit"
         })
+@RunWith(SpringRunner.class)
 
 public class TestFlexRenderer extends AbstractRenderer {
+
+    @Autowired
+    private BirtConfiguration configuration;
 
     @Autowired
     private FlexRenderer renderer;
@@ -58,22 +62,22 @@ public class TestFlexRenderer extends AbstractRenderer {
 
     @Test
     public void testBirtRendererRenderHTMLF() throws Exception {
-        renderOutputFormat(renderer, BirtProperties.OutputFormat.HTML);
+        renderOutputFormat(renderer, configuration, BirtProperties.OutputFormat.HTML);
     }
 
     @Test
     public void testBirtRendererRenderPDF() throws Exception {
-        renderOutputFormat(renderer, BirtProperties.OutputFormat.PDF);
+        renderOutputFormat(renderer, configuration, BirtProperties.OutputFormat.PDF);
     }
 
     @Test
     public void testBirtRendererRenderMSWord() throws Exception {
-        renderOutputFormat(renderer, BirtProperties.OutputFormat.MS_WORD);
+        renderOutputFormat(renderer, configuration, BirtProperties.OutputFormat.MS_WORD);
     }
 
     @Test
     public void testBirtRendererRenderText() throws Exception {
-        renderOutputFormat(renderer, BirtProperties.OutputFormat.TEXT);
+        renderOutputFormat(renderer, configuration, BirtProperties.OutputFormat.TEXT);
     }
 
 }

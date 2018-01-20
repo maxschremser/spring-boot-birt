@@ -127,14 +127,15 @@ public class BirtRenderer extends AbstractRenderer {
         }
         log.debug(out.toString());
 
-        //noinspection ResultOfMethodCallIgnored
         File outputFile = configuration.getProperties().getOutputFile();
+
         if (!outputFile.getName().matches("^.*\\.(pdf|htm|html|txt|doc|docx)$"))
             outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(configuration.getProperties().getOutputFormat()));
         if (!outputFile.getParentFile().exists())
             Files.createDirectory(outputFile.getParentFile().toPath());
         if (!outputFile.exists())
             Files.createFile(outputFile.toPath());
+
         FileOutputStream fos = new FileOutputStream(outputFile);
         fos.write(out.toByteArray());
         fos.close();
