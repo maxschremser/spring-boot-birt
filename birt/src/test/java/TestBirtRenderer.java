@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 @SpringBootTest(
@@ -43,13 +42,10 @@ import static junit.framework.Assert.assertTrue;
                 "birt.report.param.company=JUnit"
         })
 @RunWith(SpringRunner.class)
-public class TestBirtRenderer {
-    @Autowired
-    private BirtConfiguration configuration;
+public class TestBirtRenderer extends AbstractRenderer {
 
     @Autowired
-    private BirtRenderer birtRenderer;
-
+    private BirtRenderer renderer;
 
     @Test
     public void testBirtRendererPropertyOutputFormat() {
@@ -61,34 +57,24 @@ public class TestBirtRenderer {
         assertTrue(configuration.getProperties().getOutputFile().getPath() + " != out/birt/test", configuration.getProperties().getOutputFile().getPath().equals("out/birt/test"));
     }
 
-    private void renderOutputFormat(BirtProperties.OutputFormat outputFormat) throws Exception {
-        // overwrite output-format property
-        configuration.getProperties().setOutputFormat(outputFormat);
-
-        assertNotNull("birtRenderer must not be null", birtRenderer);
-        assertNotNull("birtRenderer.configuration must not be null", birtRenderer.getConfiguration());
-        birtRenderer.render(configuration.getProperties().getReport().getFile().getInputStream());
-        assertNotNull("rendered document must exist", configuration.getProperties().getOutputFile());
-    }
-
     @Test
     public void testBirtRendererRenderHTML() throws Exception {
-        renderOutputFormat(BirtProperties.OutputFormat.HTML);
+        renderOutputFormat(renderer, BirtProperties.OutputFormat.HTML);
     }
 
     @Test
     public void testBirtRendererRenderPDF() throws Exception {
-        renderOutputFormat(BirtProperties.OutputFormat.PDF);
+        renderOutputFormat(renderer, BirtProperties.OutputFormat.PDF);
     }
 
     @Test
     public void testBirtRendererRenderMSWord() throws Exception {
-        renderOutputFormat(BirtProperties.OutputFormat.MS_WORD);
+        renderOutputFormat(renderer, BirtProperties.OutputFormat.MS_WORD);
     }
 
     @Test(expected = UnsupportedFormatException.class)
     public void testBirtRendererRenderText() throws Exception {
-        renderOutputFormat(BirtProperties.OutputFormat.TEXT);
+        renderOutputFormat(renderer, BirtProperties.OutputFormat.TEXT);
     }
 
 }

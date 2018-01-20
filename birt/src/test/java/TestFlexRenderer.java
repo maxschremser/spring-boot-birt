@@ -18,16 +18,13 @@
 
 import com.ibm.birt.bean.BirtConfiguration;
 import com.ibm.birt.bean.BirtProperties;
-import com.ibm.birt.renderer.BirtRenderer;
 import com.ibm.birt.renderer.FlexRenderer;
-import org.eclipse.birt.report.engine.api.UnsupportedFormatException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 @SpringBootTest(
@@ -44,13 +41,10 @@ import static junit.framework.Assert.assertTrue;
                 "birt.report.param.company=JUnit"
         })
 @RunWith(SpringRunner.class)
-public class TestFlexRenderer {
-    @Autowired
-    private BirtConfiguration configuration;
+public class TestFlexRenderer extends AbstractRenderer {
 
     @Autowired
-    private FlexRenderer flexRenderer;
-
+    private FlexRenderer renderer;
 
     @Test
     public void testBirtRendererPropertyOutputFormat() {
@@ -62,34 +56,24 @@ public class TestFlexRenderer {
         assertTrue(configuration.getProperties().getOutputFile().getPath() + " != out/flex/test", configuration.getProperties().getOutputFile().getPath().equals("out/flex/test"));
     }
 
-    private void renderOutputFormat(BirtProperties.OutputFormat outputFormat) throws Exception {
-        // overwrite output-format property
-        configuration.getProperties().setOutputFormat(outputFormat);
-
-        assertNotNull("birtRenderer must not be null", flexRenderer);
-        assertNotNull("birtRenderer.configuration must not be null", flexRenderer.getConfiguration());
-        flexRenderer.render(configuration.getProperties().getReport().getFile().getInputStream());
-        assertNotNull("rendered document must exist", configuration.getProperties().getOutputFile());
-    }
-
     @Test
     public void testBirtRendererRenderHTMLF() throws Exception {
-        renderOutputFormat(BirtProperties.OutputFormat.HTML);
+        renderOutputFormat(renderer, BirtProperties.OutputFormat.HTML);
     }
 
     @Test
     public void testBirtRendererRenderPDF() throws Exception {
-        renderOutputFormat(BirtProperties.OutputFormat.PDF);
+        renderOutputFormat(renderer, BirtProperties.OutputFormat.PDF);
     }
 
     @Test
     public void testBirtRendererRenderMSWord() throws Exception {
-        renderOutputFormat(BirtProperties.OutputFormat.MS_WORD);
+        renderOutputFormat(renderer, BirtProperties.OutputFormat.MS_WORD);
     }
 
     @Test
     public void testBirtRendererRenderText() throws Exception {
-        renderOutputFormat(BirtProperties.OutputFormat.TEXT);
+        renderOutputFormat(renderer, BirtProperties.OutputFormat.TEXT);
     }
 
 }

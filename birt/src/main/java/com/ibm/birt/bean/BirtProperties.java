@@ -44,7 +44,7 @@ public class BirtProperties {
     private OutputFormat outputFormat;
     /**
      * the path where the report will be rendered to
-     *//* TODO: no Validations found to apply */
+     */
     private File outputFile;
     @Valid
     private Report report;
@@ -80,7 +80,7 @@ public class BirtProperties {
         @Getter
         @Setter
         @ToString
-        public static class Param {
+        static class Param {
             /**
              * firstname for the dataset
              */

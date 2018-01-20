@@ -128,11 +128,14 @@ public class BirtRenderer extends AbstractRenderer {
 
         //noinspection ResultOfMethodCallIgnored
         File outputFile = configuration.getProperties().getOutputFile();
-        if (!outputFile.getName().matches("^.*\\.[html|htm|pdf|txt|doc|docx]$"))
+        if (!outputFile.getName().matches("^.*\\.(pdf|htm|html|txt|doc|docx)$"))
             outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(configuration.getProperties().getOutputFormat()));
-        // ignore
-        outputFile.getParentFile().mkdirs();
-        outputFile.createNewFile();
+        if (!outputFile.getParentFile().mkdirs()) {
+            throw new RuntimeException("Cannot create directory " + outputFile.getParentFile().getAbsolutePath());
+        }
+        if (!outputFile.createNewFile()) {
+            throw new RuntimeException("Cannot create file " + outputFile.getAbsolutePath());
+        }
         FileOutputStream fos = new FileOutputStream(outputFile);
         fos.write(out.toByteArray());
         fos.close();
