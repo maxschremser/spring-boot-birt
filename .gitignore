@@ -2,6 +2,7 @@
 .gradle
 /build/
 !gradle/wrapper/gradle-wrapper.jar
+birt/banner.txt
 
 ### STS ###
 .apt_generated

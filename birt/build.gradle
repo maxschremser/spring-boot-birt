@@ -20,24 +20,6 @@ import javax.swing.text.html.HTMLEditorKit
 import javax.swing.text.html.parser.ParserDelegator
 import java.util.jar.JarFile
 
-buildscript {
-    ext {
-        springBootVersion = '2.0.0.M7'
-    }
-    repositories {
-        mavenCentral()
-        jcenter()
-        maven { url "https://repo.spring.io/snapshot" }
-        maven { url "https://repo.spring.io/milestone" }
-        maven { url "https://repo.spring.io/plugins-release" }
-
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath("io.spring.gradle:propdeps-plugin:0.0.10.RELEASE")
-    }
-}
-
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'java'
@@ -72,68 +54,15 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     compile('org.springframework.boot:spring-boot-starter-validation')
     compile(fileTree(dir: "../birt-runtime-4_5_0/ReportEngine", include: '**/*.jar'))
-    compile("org.springframework.boot:spring-boot-configuration-processor")
     compile("org.projectlombok:lombok:1.16.18")
+    compile("com.vladsch.flexmark:flexmark-all:0.28.32")
+    compile("com.vladsch.flexmark:flexmark-docx-converter:0.28.32")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile("com.github.lalyos:jfiglet:0.0.8")
     testCompile("junit:junit-dep:4.10")
 
+    optional("org.springframework.boot:spring-boot-configuration-processor")
 }
 
 compileJava.dependsOn(processResources)
-
-task grepLicenses {
-    dependsOn(clean)
-    doLast {
-        configurations.runtime.each { jar ->
-            println "- ${jar.name}"
-            def jarFile = new JarFile(jar)
-            jarFile.entries().each { jarEntry ->
-                if (jarEntry =~ /(?i)license.*/) {
-                    println " > $jarEntry.name"
-                    def f = new File("${project.buildDir}/LICENSES", "LICENSE.${jar.name.substring(0, (jar.name.length() - 4))}.txt")
-                    f.parentFile.mkdirs()
-                    if (!f.exists())
-                        f.createNewFile()
-
-                    def fr = new InputStreamReader(jarFile.getInputStream(jarEntry))
-                    if (jarEntry =~ /.*\.html/) {
-                        def sb = new StringBuffer()
-                        def isNewline = false
-                        def isStarted = false
-                        def cb = new HTMLEditorKit.ParserCallback() {
-                            @Override
-                            void handleStartTag(HTML.Tag t, MutableAttributeSet a, int pos) {
-                                if (!isNewline)
-                                    isNewline = (t ==~ /(?i)p|br|h1|h2|h3|h4|h5|h6|pre/)
-                                if (!isStarted) {
-                                    isStarted = (t ==~ /(?i)body/)
-                                }
-                            }
-
-                            @Override
-                            void handleText(char[] data, int pos) {
-                                if (isStarted) {
-                                    def sData = new String(data)
-                                    sData = isNewline ? sprintf("%n%s", sData) : sprintf(sData)
-                                    sb.append(sData)
-                                    isNewline = false
-                                }
-                            }
-                        }
-                        new ParserDelegator().parse(fr, cb, true)
-                        sb.append(sprintf("%n%n"))
-                        f.text += sb.toString()
-                    } else {
-                        f.text += fr.text
-                    }
-                }
-            }
-        }
-        project.copy() {
-            from "${project.buildDir}/LICENSES"
-            into "${project.rootDir}/LICENSES"
-        }
-    }
-}

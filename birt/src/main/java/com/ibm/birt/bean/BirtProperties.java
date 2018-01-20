@@ -1,22 +1,23 @@
 /*
- *   Copyright 2018 Maximilian Schremser
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ *  *   Copyright 2018 Maximilian Schremser
+ *  *
+ *  *   Licensed under the Apache License, Version 2.0 (the "License");
+ *  *   you may not use this file except in compliance with the License.
+ *  *   You may obtain a copy of the License at
+ *  *
+ *  *       http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  *   Unless required by applicable law or agreed to in writing, software
+ *  *   distributed under the License is distributed on an "AS IS" BASIS,
+ *  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  *   See the License for the specific language governing permissions and
+ *  *   limitations under the License.
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
  */
 
-package com.ibm.birt;
+package com.ibm.birt.bean;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -26,8 +27,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,24 +38,23 @@ import java.util.Map;
 @Slf4j
 @Validated
 public class BirtProperties {
-    public enum OutputFormat {
-        HTML,
-        PDF,
-        MS_WORD;
-    }
-
     /**
      * the format of the rendered report
      */
     private OutputFormat outputFormat;
-
     /**
      * the path where the report will be rendered to
      *//* TODO: no Validations found to apply */
     private File outputFile;
-
     @Valid
     private Report report;
+
+    public enum OutputFormat {
+        HTML,
+        PDF,
+        MS_WORD,
+        TEXT
+    }
 
     @Getter
     @Setter

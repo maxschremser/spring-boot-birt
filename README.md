@@ -1,4 +1,4 @@
-# birt-integration
+# spring-boot-birt
 A simple BIRT Rendition Engine
 
 [![CircleCI](https://img.shields.io/circleci/project/github/RedSparr0w/node-csgo-parser.svg)]()
@@ -30,12 +30,12 @@ BIRT_REPORT_PARAM_DATASET='{ "firstname": "Max", "lastname": "Schremser", "compa
 ```
 - Java System Property
 ```gradle
-java -Dbirt.report.param.dataset='{ "firstname": "Max", "lastname": "Schremser", "company": "Amazon" }' -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar
+java -Dbirt.report.param.dataSet='{ "firstname": "Max", "lastname": "Schremser", "company": "Amazon" }' -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar
 ```
 
 - Command line argument
 ```gradle
-java -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar --birt.report.param.dataset='{ "firstname": "Max", "lastname": "Schremser", "company": "Google" }'
+java -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar --birt.report.param.dataSet='{ "firstname": "Max", "lastname": "Schremser", "company": "Google" }'
 ```
 
 - External Properties file
@@ -48,7 +48,7 @@ or any different environment.
 Instead of setting the report parameter **dataset** in JSON format, the parameters for **firstname**, **lastname**
 and **company** can be set to form the JSON object.
 ```gradle
-gradlew -Dbirt.report.param.firstname=Max -Dbirt.report.param.lastname=Schremser -Dbirt.report.param.company=IBM run
+gradlew -Dbirt.report.params.firstname=Max -Dbirt.report.params.lastname=Schremser -Dbirt.report.params.company=IBM run
 ```
 
 

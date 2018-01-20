@@ -1,44 +1,50 @@
 /*
- *   Copyright 2018 Maximilian Schremser
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ *  *   Copyright 2018 Maximilian Schremser
+ *  *
+ *  *   Licensed under the Apache License, Version 2.0 (the "License");
+ *  *   you may not use this file except in compliance with the License.
+ *  *   You may obtain a copy of the License at
+ *  *
+ *  *       http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  *   Unless required by applicable law or agreed to in writing, software
+ *  *   distributed under the License is distributed on an "AS IS" BASIS,
+ *  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  *   See the License for the specific language governing permissions and
+ *  *   limitations under the License.
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
  */
 
-package com.ibm.birt;
+package com.ibm.birt.renderer;
 
+import com.ibm.birt.annotation.Renderer;
+import com.ibm.birt.bean.BirtConfiguration;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.core.framework.Platform;
 import org.eclipse.birt.report.engine.api.*;
 import org.eclipse.birt.report.engine.api.impl.ParameterValidationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.Base64;
 import java.util.List;
 
 @Component
-public class BirtProcessor {
-    private static Logger log = LoggerFactory.getLogger(BirtProcessor.class);
-    private BirtConfiguration configuration;
-
-    public BirtProcessor(BirtConfiguration configuration) {
-        this.configuration = configuration;
+@Slf4j
+@Renderer(filetype = ".rptdesign")
+public class BirtRenderer extends AbstractRenderer {
+    public BirtRenderer(BirtConfiguration configuration) {
+        super(configuration);
     }
 
-    public void renderReport() throws BirtException, IOException {
+    @Override
+    public void render(InputStream inputStream) throws Exception {
         IReportEngine engine;
         EngineConfig config = new EngineConfig();
         Platform.startup(config);
@@ -48,7 +54,9 @@ public class BirtProcessor {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        IReportRunnable design = engine.openReportDesign("RT001", getInputStream());
+        IReportRunnable design = engine.openReportDesign("RT001", inputStream);
+        inputStream.close();
+
         IRunAndRenderTask task = engine.createRunAndRenderTask(design);
         IGetParameterDefinitionTask paramTask = engine.createGetParameterDefinitionTask(design);
         for (Object o : paramTask.getParameterDefns(false)) {
@@ -90,10 +98,11 @@ public class BirtProcessor {
                 options = new DocxRenderOption();
                 options.setOutputFormat("docx");
                 break;
+            case TEXT:
+                throw new UnsupportedFormatException("BIRT-001", new RuntimeException("OutputFormat 'text' is not supported for BIRT."));
             default:
-                options = new RenderOption();
-//                options.setOutputFormat("txt");
-                break;
+                throw new UnsupportedFormatException("BIRT-001", new RuntimeException("OutputFormat 'text' is not supported for BIRT."));
+
         }
         options.setOutputStream(out);
         options.setImageHandler(new HTMLServerImageHandler() {
@@ -121,26 +130,12 @@ public class BirtProcessor {
         File outputFile = configuration.getProperties().getOutputFile();
         if (!outputFile.getName().matches("^.*\\.[html|htm|pdf|txt|doc|docx]$"))
             outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(configuration.getProperties().getOutputFormat()));
+        // ignore
+        outputFile.getParentFile().mkdirs();
         outputFile.createNewFile();
         FileOutputStream fos = new FileOutputStream(outputFile);
         fos.write(out.toByteArray());
         fos.close();
-
         log.info("Report has been rendered to {}", outputFile.getAbsolutePath());
     }
-
-    public InputStream getInputStream() throws IOException {
-        return configuration.getProperties().getReport().getFile().getInputStream();
-    }
-
-    private String getFileEnding(BirtProperties.OutputFormat outputFormat) {
-        switch (outputFormat) {
-            case HTML: return "html";
-            case PDF: return "pdf";
-            case MS_WORD: return "docx";
-            default: return "txt";
-        }
-    }
-
-
 }
