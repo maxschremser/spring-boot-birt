@@ -26,16 +26,16 @@ Spring.io [documentation](https://docs.spring.io/spring-boot/docs/current/refere
 
 - Environment Variable
 ```gradle
-BIRT_REPORT_PARAM_DATASET='{ "firstname": "Max", "lastname": "Schremser", "company": "Microsoft" }' java -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar
+BIRT_REPORT_PARAMS_DATASET='{ "firstname": "Max", "lastname": "Schremser", "company": "Microsoft" }' java -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar
 ```
 - Java System Property
 ```gradle
-java -Dbirt.report.param.dataSet='{ "firstname": "Max", "lastname": "Schremser", "company": "Amazon" }' -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar
+java -Dbirt.report.params.dataSet='{ "firstname": "Max", "lastname": "Schremser", "company": "Amazon" }' -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar
 ```
 
 - Command line argument
 ```gradle
-java -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar --birt.report.param.dataSet='{ "firstname": "Max", "lastname": "Schremser", "company": "Google" }'
+java -jar birt/build/install/birt-boot/lib/birt-0.0.1.jar --birt.report.params.dataSet='{ "firstname": "Max", "lastname": "Schremser", "company": "Google" }'
 ```
 
 - External Properties file
@@ -48,7 +48,7 @@ or any different environment.
 Instead of setting the report parameter **dataset** in JSON format, the parameters for **firstname**, **lastname**
 and **company** can be set to form the JSON object.
 ```gradle
-gradlew -Dbirt.report.params.firstname=Max -Dbirt.report.params.lastname=Schremser -Dbirt.report.params.company=IBM run
+gradlew -Dbirt.report.param.firstname=Max -Dbirt.report.param.lastname=Schremser -Dbirt.report.param.company=IBM run
 ```
 
 
