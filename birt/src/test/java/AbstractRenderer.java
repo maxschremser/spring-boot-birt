@@ -19,11 +19,16 @@
 import com.ibm.birt.bean.BirtConfiguration;
 import com.ibm.birt.bean.BirtProperties;
 import com.ibm.birt.renderer.IRenderer;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static junit.framework.Assert.assertNotNull;
 
+@RunWith(SpringRunner.class)
 class AbstractRenderer {
 
+    @Autowired
     BirtConfiguration configuration;
 
     void renderOutputFormat(IRenderer renderer, BirtProperties.OutputFormat outputFormat) throws Exception {

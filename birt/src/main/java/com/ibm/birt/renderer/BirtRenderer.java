@@ -32,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Base64;
 import java.util.List;
 
@@ -130,12 +131,10 @@ public class BirtRenderer extends AbstractRenderer {
         File outputFile = configuration.getProperties().getOutputFile();
         if (!outputFile.getName().matches("^.*\\.(pdf|htm|html|txt|doc|docx)$"))
             outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(configuration.getProperties().getOutputFormat()));
-        if (!outputFile.getParentFile().mkdirs()) {
-            throw new RuntimeException("Cannot create directory " + outputFile.getParentFile().getAbsolutePath());
-        }
-        if (!outputFile.createNewFile()) {
-            throw new RuntimeException("Cannot create file " + outputFile.getAbsolutePath());
-        }
+        if (!outputFile.getParentFile().exists())
+            Files.createDirectory(outputFile.getParentFile().toPath());
+        if (!outputFile.exists())
+            Files.createFile(outputFile.toPath());
         FileOutputStream fos = new FileOutputStream(outputFile);
         fos.write(out.toByteArray());
         fos.close();

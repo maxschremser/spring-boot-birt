@@ -41,6 +41,7 @@ import org.eclipse.birt.report.engine.api.*;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.file.Files;
 
 @Component
 @Slf4j
@@ -128,14 +129,14 @@ public class FlexRenderer extends AbstractRenderer {
         }
 
         File outputFile = configuration.getProperties().getOutputFile();
+
         if (!outputFile.getName().matches("^.*\\.(html|htm|pdf|txt|doc|docx)$"))
             outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(configuration.getProperties().getOutputFormat()));
-        if (!outputFile.getParentFile().mkdirs()) {
-            throw new RuntimeException("Cannot create directory " + outputFile.getParentFile().getAbsolutePath());
-        }
-        if (!outputFile.createNewFile()) {
-            throw new RuntimeException("Cannot create file " + outputFile.getAbsolutePath());
-        }
+        if (!outputFile.getParentFile().exists())
+            Files.createDirectory(outputFile.getParentFile().toPath());
+        if (!outputFile.exists())
+            Files.createFile(outputFile.toPath());
+
         FileOutputStream fos = new FileOutputStream(outputFile);
         fos.write(out.toByteArray());
         fos.close();

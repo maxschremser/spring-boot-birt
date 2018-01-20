@@ -21,10 +21,8 @@ import com.ibm.birt.bean.BirtProperties;
 import com.ibm.birt.renderer.BirtRenderer;
 import org.eclipse.birt.report.engine.api.UnsupportedFormatException;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -41,7 +39,7 @@ import static junit.framework.Assert.assertTrue;
                 "birt.report.param.lastname=Tester",
                 "birt.report.param.company=JUnit"
         })
-@RunWith(SpringRunner.class)
+
 public class TestBirtRenderer extends AbstractRenderer {
 
     @Autowired
