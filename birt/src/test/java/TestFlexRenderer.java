@@ -50,32 +50,32 @@ public class TestFlexRenderer extends AbstractRenderer {
     private FlexRenderer renderer;
 
     @Test
-    public void testBirtRendererPropertyOutputFormat() {
+    public void testFlexRendererPropertyOutputFormat() {
         assertTrue(configuration.getProperties().getOutputFormat().name() + " != HTML", configuration.getProperties().getOutputFormat().name().equals("HTML"));
     }
 
     @Test
-    public void testBirtRendererPropertyOutputFile() {
+    public void testFlexRendererPropertyOutputFile() {
         assertTrue(configuration.getProperties().getOutputFile().getPath() + " != out/flex/test", configuration.getProperties().getOutputFile().getPath().equals("out/flex/test"));
     }
 
     @Test
-    public void testBirtRendererRenderHTMLF() throws Exception {
+    public void testFlexRendererRenderHTMLF() throws Exception {
         renderOutputFormat(renderer, configuration, BirtProperties.OutputFormat.HTML);
     }
 
     @Test
-    public void testBirtRendererRenderPDF() throws Exception {
+    public void testFlexRendererRenderPDF() throws Exception {
         renderOutputFormat(renderer, configuration, BirtProperties.OutputFormat.PDF);
     }
 
     @Test
-    public void testBirtRendererRenderMSWord() throws Exception {
+    public void testFlexRendererRenderMSWord() throws Exception {
         renderOutputFormat(renderer, configuration, BirtProperties.OutputFormat.MS_WORD);
     }
 
     @Test
-    public void testBirtRendererRenderText() throws Exception {
+    public void testFlexRendererRenderText() throws Exception {
         renderOutputFormat(renderer, configuration, BirtProperties.OutputFormat.TEXT);
     }
 
