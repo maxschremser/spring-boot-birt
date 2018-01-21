@@ -60,7 +60,7 @@ public class TestFlexRenderer extends AbstractRenderer {
     }
 
     @Test
-    public void testFlexRendererRenderHTMLF() throws Exception {
+    public void testFlexRendererRenderHTML() throws Exception {
         renderOutputFormat(renderer, configuration, BirtProperties.OutputFormat.HTML);
     }
 

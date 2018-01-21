@@ -132,7 +132,7 @@ public class BirtRenderer extends AbstractRenderer {
         if (!outputFile.getName().matches("^.*\\.(pdf|htm|html|txt|doc|docx)$"))
             outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(configuration.getProperties().getOutputFormat()));
         if (!outputFile.getParentFile().exists())
-            Files.createDirectory(outputFile.getParentFile().toPath());
+            Files.createDirectories(outputFile.getParentFile().toPath());
         if (!outputFile.exists())
             Files.createFile(outputFile.toPath());
 

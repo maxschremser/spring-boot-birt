@@ -133,7 +133,7 @@ public class FlexRenderer extends AbstractRenderer {
         if (!outputFile.getName().matches("^.*\\.(html|htm|pdf|txt|doc|docx)$"))
             outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(configuration.getProperties().getOutputFormat()));
         if (!outputFile.getParentFile().exists())
-            Files.createDirectory(outputFile.getParentFile().toPath());
+            Files.createDirectories(outputFile.getParentFile().toPath());
         if (!outputFile.exists())
             Files.createFile(outputFile.toPath());
 
