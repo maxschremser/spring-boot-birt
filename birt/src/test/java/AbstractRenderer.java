@@ -33,4 +33,5 @@ class AbstractRenderer {
         renderer.render(configuration.getProperties().getReport().getFile().getInputStream());
         assertNotNull("rendered document must exist", configuration.getProperties().getOutputFile());
     }
+
 }
