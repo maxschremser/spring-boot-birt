@@ -40,6 +40,7 @@ jobs:
       - run:
           name: Save test results 
           command: |
+            gradle test
             mkdir -p ~/junit/
             find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
           when: always
