@@ -20,6 +20,7 @@ package com.ibm.birt.renderer;
 
 import com.ibm.birt.annotation.Renderer;
 import com.ibm.birt.bean.BirtConfiguration;
+import com.ibm.birt.bean.BirtProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.birt.core.exception.BirtException;
@@ -28,24 +29,22 @@ import org.eclipse.birt.report.engine.api.*;
 import org.eclipse.birt.report.engine.api.impl.ParameterValidationException;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 @Slf4j
 @Renderer(filetype = ".rptdesign")
 public class BirtRenderer extends AbstractRenderer {
-    public BirtRenderer(BirtConfiguration configuration) {
-        super(configuration);
+    public BirtRenderer() {
     }
 
     @Override
-    public void render(InputStream inputStream) throws Exception {
+    public ByteArrayOutputStream render(InputStream inputStream, BirtProperties.OutputFormat outputFormat, Map<String, String> params) throws Exception {
         IReportEngine engine;
         EngineConfig config = new EngineConfig();
         Platform.startup(config);
@@ -66,7 +65,7 @@ public class BirtRenderer extends AbstractRenderer {
                 continue; //only process scalar parameters
             }
             String paramName = rptParam.getName();
-            String paramValue = configuration.getProperties().getReport().getParams().get(paramName);
+            String paramValue = params.get(paramName);
 
             if (paramValue != null) {
                 task.setParameterValue(paramName, paramValue);
@@ -85,8 +84,8 @@ public class BirtRenderer extends AbstractRenderer {
 
         //Set rendering options - such as file or stream output,
         IRenderOption options;
-        log.info("Output Format is: {}", configuration.getProperties().getOutputFormat());
-        switch (configuration.getProperties().getOutputFormat()) {
+        log.info("Output Format is: {}", outputFormat);
+        switch (outputFormat) {
             case HTML:
                 options = new HTMLRenderOption();
                 options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_HTML);
@@ -127,10 +126,9 @@ public class BirtRenderer extends AbstractRenderer {
         }
         log.debug(out.toString());
 
-        File outputFile = configuration.getProperties().getOutputFile();
-
+        /*
         if (!outputFile.getName().matches("^.*\\.(pdf|htm|html|txt|doc|docx)$"))
-            outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(configuration.getProperties().getOutputFormat()));
+            outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(outputFormat));
         if (!outputFile.getParentFile().exists())
             Files.createDirectories(outputFile.getParentFile().toPath());
         if (!outputFile.exists())
@@ -140,5 +138,7 @@ public class BirtRenderer extends AbstractRenderer {
         fos.write(out.toByteArray());
         fos.close();
         log.info("Report has been rendered to {}", outputFile.getAbsolutePath());
+        */
+        return out;
     }
 }

@@ -47,9 +47,9 @@ public class BirtProcessor {
 
         InputStream inputStream = configuration.getProperties().getReport().getFile().getInputStream();
         if (suffix.equals(BirtRenderer.class.getAnnotation(Renderer.class).filetype()))
-            birtRenderer.render(inputStream);
+            birtRenderer.render(inputStream, configuration.getProperties().getOutputFile(), configuration.getProperties().getOutputFormat(), configuration.getProperties().getReport().getParams());
         else if (suffix.equals(FlexRenderer.class.getAnnotation(Renderer.class).filetype()))
-            flexRenderer.render(inputStream);
+            flexRenderer.render(inputStream, configuration.getProperties().getOutputFile(), configuration.getProperties().getOutputFormat(), configuration.getProperties().getReport().getParams());
         else
             throw new UnsupportedFormatException("BIRT-002", new RuntimeException("Report Template Type (" + suffix + ") does not match a valid Renderer. Use " +
                     BirtRenderer.class.getAnnotation(Renderer.class).filetype() + " or " +

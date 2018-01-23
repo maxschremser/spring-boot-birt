@@ -20,6 +20,10 @@ import com.ibm.birt.bean.BirtConfiguration;
 import com.ibm.birt.bean.BirtProperties;
 import com.ibm.birt.renderer.IRenderer;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
 import static junit.framework.Assert.assertNotNull;
 
 class AbstractRenderer {
@@ -30,7 +34,14 @@ class AbstractRenderer {
 
         assertNotNull("IRenderer must not be null", renderer);
         assertNotNull("configuration must not be null", configuration);
-        renderer.render(configuration.getProperties().getReport().getFile().getInputStream());
+        File outputFile = configuration.getProperties().getOutputFile();
+        FileOutputStream fos = new FileOutputStream(outputFile);
+        renderer.render(
+                configuration.getProperties().getReport().getFile().getInputStream(),
+                configuration.getProperties().getOutputFormat(),
+                configuration.getProperties().getReport().getParams()
+        ).writeTo(fos);
+        fos.close();
         assertNotNull("rendered document must exist", configuration.getProperties().getOutputFile());
     }
 

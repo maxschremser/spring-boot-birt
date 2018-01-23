@@ -16,19 +16,19 @@
  *
  */
 
-package com.ibm.birt.renderer;
+package com.ibm.birt.bean;
 
-import com.ibm.birt.bean.BirtProperties;
+import com.ibm.birt.bean.rest.BirtResource;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Map;
+@Component
+public class BirtResourceConfig extends ResourceConfig {
+    public BirtResourceConfig() {
+        registerEndpoints();
+    }
 
-public interface IRenderer {
-    ByteArrayOutputStream render(InputStream inputStream, BirtProperties.OutputFormat outputFormat, Map<String, String> params) throws Exception;
-
-    String getFileEnding(BirtProperties.OutputFormat outputFormat);
-
+    private void registerEndpoints() {
+        register(BirtResource.class);
+    }
 }

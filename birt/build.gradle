@@ -13,13 +13,6 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-
-import javax.swing.text.MutableAttributeSet
-import javax.swing.text.html.HTML
-import javax.swing.text.html.HTMLEditorKit
-import javax.swing.text.html.parser.ParserDelegator
-import java.util.jar.JarFile
-
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'java'
@@ -50,13 +43,26 @@ jar {
     }
 }
 
+configurations {
+    web {
+        extendsFrom compile
+    }
+}
+
+
+
 dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     compile('org.springframework.boot:spring-boot-starter-validation')
+    compile('org.springframework.boot:spring-boot-devtools')
     compile(fileTree(dir: "../birt-runtime-4_5_0/ReportEngine", include: '**/*.jar'))
     compile("org.projectlombok:lombok:1.16.18")
     compile("com.vladsch.flexmark:flexmark-all:0.28.32")
     compile("com.vladsch.flexmark:flexmark-docx-converter:0.28.32")
+
+    // jsersey dependencies
+    compile('org.springframework.boot:spring-boot-starter-jersey')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile("com.github.lalyos:jfiglet:0.0.8")

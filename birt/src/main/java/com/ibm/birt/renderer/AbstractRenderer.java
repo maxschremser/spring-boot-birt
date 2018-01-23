@@ -18,17 +18,19 @@
 
 package com.ibm.birt.renderer;
 
-import com.ibm.birt.bean.BirtConfiguration;
 import com.ibm.birt.bean.BirtProperties;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.Map;
 
 @Getter
+@Slf4j
 public abstract class AbstractRenderer implements IRenderer {
-    BirtConfiguration configuration;
-
-    public AbstractRenderer(BirtConfiguration configuration) {
-        this.configuration = configuration;
-    }
 
     @Override
     public String getFileEnding(BirtProperties.OutputFormat outputFormat) {
@@ -42,5 +44,19 @@ public abstract class AbstractRenderer implements IRenderer {
             default:
                 return "txt";
         }
+    }
+
+    public void render(InputStream inputStream, File outputFile, BirtProperties.OutputFormat outputFormat, Map<String, String> params) throws Exception {
+        if (!outputFile.getName().matches("^.*\\.(pdf|htm|html|txt|doc|docx)$"))
+            outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(outputFormat));
+        if (!outputFile.getParentFile().exists())
+            Files.createDirectories(outputFile.getParentFile().toPath());
+        if (!outputFile.exists())
+            Files.createFile(outputFile.toPath());
+
+        FileOutputStream fos = new FileOutputStream(outputFile);
+        fos.write(render(inputStream, outputFormat, params).toByteArray());
+        fos.close();
+        log.info("Report has been rendered to {}", outputFile.getAbsolutePath());
     }
 }

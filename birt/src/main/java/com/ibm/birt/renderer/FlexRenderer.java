@@ -19,7 +19,6 @@
 package com.ibm.birt.renderer;
 
 import com.ibm.birt.annotation.Renderer;
-import com.ibm.birt.bean.BirtConfiguration;
 import com.ibm.birt.bean.BirtProperties;
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.ast.util.TextCollectingVisitor;
@@ -37,42 +36,38 @@ import org.apache.commons.io.IOUtils;
 import org.docx4j.Docx4J;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.eclipse.birt.report.engine.api.*;
+import org.eclipse.birt.report.engine.api.UnsupportedFormatException;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Map;
 
 @Component
 @Slf4j
 @Renderer(filetype = ".md")
 public class FlexRenderer extends AbstractRenderer {
-    public FlexRenderer(BirtConfiguration configuration) {
-        super(configuration);
-    }
-
     @Override
-    public void render(InputStream inputStream) throws Exception {
-        InputStreamReader inputStreamReader = new InputStreamReader(configuration.getProperties().getReport().getFile().getInputStream());
+    public ByteArrayOutputStream render(InputStream inputStream, BirtProperties.OutputFormat outputFormat, Map<String, String> params) throws Exception {
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         String input = IOUtils.toString(inputStreamReader);
         inputStream.close();
 
-        log.info("Output Format is: {}", configuration.getProperties().getOutputFormat());
-        BirtProperties.OutputFormat outputFormat = configuration.getProperties().getOutputFormat();
+        log.info("Output Format is: {}", outputFormat);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         switch (outputFormat) {
             case PDF:
                 final MutableDataHolder PDF_OPTIONS = PegdownOptionsAdapter.flexmarkOptions(
                         Extensions.ALL & ~(Extensions.ANCHORLINKS | Extensions.EXTANCHORLINKS_WRAP)
                 ).toMutable();
-                
+
                 final Parser PDF_PARSER = Parser.builder(PDF_OPTIONS).build();
                 final HtmlRenderer PDF_RENDERER = HtmlRenderer.builder(PDF_OPTIONS).build();
 
                 Node pdfDocument = PDF_PARSER.parse(input);
                 String pdfHtml = PDF_RENDERER.render(pdfDocument);
 
-                PdfConverterExtension.exportToPdf(out, pdfHtml,"", PDF_OPTIONS);
+                PdfConverterExtension.exportToPdf(out, pdfHtml, "", PDF_OPTIONS);
                 break;
             case HTML:
                 final MutableDataHolder HTML_OPTIONS = PegdownOptionsAdapter.flexmarkOptions(
@@ -127,20 +122,7 @@ public class FlexRenderer extends AbstractRenderer {
                 throw new UnsupportedFormatException("BIRT-001", new RuntimeException("OutputFormat '" + outputFormat.name() + "' is not supported for BIRT."));
 
         }
-
-        File outputFile = configuration.getProperties().getOutputFile();
-
-        if (!outputFile.getName().matches("^.*\\.(html|htm|pdf|txt|doc|docx)$"))
-            outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(configuration.getProperties().getOutputFormat()));
-        if (!outputFile.getParentFile().exists())
-            Files.createDirectories(outputFile.getParentFile().toPath());
-        if (!outputFile.exists())
-            Files.createFile(outputFile.toPath());
-
-        FileOutputStream fos = new FileOutputStream(outputFile);
-        fos.write(out.toByteArray());
-        fos.close();
-        log.info("Report has been rendered to {}", outputFile.getAbsolutePath());
-
+        return out;
     }
+
 }

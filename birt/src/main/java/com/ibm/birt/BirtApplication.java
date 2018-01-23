@@ -16,17 +16,16 @@
 
 package com.ibm.birt;
 
-import com.ibm.birt.bean.BirtProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class BirtApplication {
-    public static void main(String[] args) throws Exception {
-        SpringApplication app = new SpringApplication(BirtApplication.class);
-        ConfigurableApplicationContext ctx = app.run(args);
-        ctx.getBean(BirtProcessor.class).renderReport();
-        ctx.close();
+    public static void main(String[] args) {
+        new SpringApplication(BirtApplication.class).run(args);
+        // SpringApplication app = new SpringApplication(BirtApplication.class);
+        // ConfigurableApplicationContext ctx = app.run(args);
+        // ctx.getBean(BirtProcessor.class).renderReport();
+        // ctx.close();
     }
 }
