@@ -23,18 +23,24 @@ import com.ibm.birt.renderer.IRenderer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.util.UUID;
 
 import static junit.framework.Assert.assertNotNull;
 
 class AbstractRenderer {
 
-    void renderOutputFormat(IRenderer renderer, BirtConfiguration configuration, BirtProperties.OutputFormat outputFormat) throws Exception {
-        // overwrite output-format property
-        configuration.getProperties().setOutputFormat(outputFormat);
+    private final FileAttribute<?>[] fileAttributes = new FileAttribute<?>[]{};
 
+
+    void renderOutputFormat(IRenderer renderer, BirtConfiguration configuration, BirtProperties.OutputFormat outputFormat) throws Exception {
         assertNotNull("IRenderer must not be null", renderer);
         assertNotNull("configuration must not be null", configuration);
-        File outputFile = configuration.getProperties().getOutputFile();
+        Path outputPath = configuration.getProperties().getOutputPath();
+        Files.createDirectories(outputPath, fileAttributes);
+        File outputFile = new File(outputPath.toFile(), UUID.randomUUID() + "." + outputFormat.name());
         FileOutputStream fos = new FileOutputStream(outputFile);
         renderer.render(
                 configuration.getProperties().getReport().getFile().getInputStream(),
@@ -42,7 +48,7 @@ class AbstractRenderer {
                 configuration.getProperties().getReport().getParams()
         ).writeTo(fos);
         fos.close();
-        assertNotNull("rendered document must exist", configuration.getProperties().getOutputFile());
+        assertNotNull("rendered document must exist", outputFile);
     }
 
 }

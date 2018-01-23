@@ -21,6 +21,7 @@ package com.ibm.birt.bean.rest;
 import com.ibm.birt.bean.BirtConfiguration;
 import com.ibm.birt.bean.BirtProperties;
 import com.ibm.birt.renderer.BirtRenderer;
+import com.ibm.birt.renderer.FlexRenderer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.attribute.FileAttribute;
@@ -37,21 +37,21 @@ import java.util.Map;
 
 @Component
 @Slf4j
-@Path("/birt")
-public class BirtResource {
+@Path("/flex")
+public class FlexResource {
 
     BirtConfiguration configuration;
-    BirtRenderer birtRenderer;
+    FlexRenderer flexRenderer;
 
-    public BirtResource(BirtConfiguration configuration, BirtRenderer birtRenderer) {
+    public FlexResource(BirtConfiguration configuration, FlexRenderer flexRenderer) {
         this.configuration = configuration;
-        this.birtRenderer = birtRenderer;
+        this.flexRenderer = flexRenderer;
     }
 
     @GET
     @Path("/hello")
     public String test() {
-        return "Hello Birt";
+        return "Hello Flex";
     }
 
     private ByteArrayOutputStream getForFormat(String dataSet, BirtProperties.OutputFormat outputFormat) throws Exception {
@@ -60,7 +60,7 @@ public class BirtResource {
         }
         Map<String, String> params = new HashMap<>();
         params.put("dataSet", dataSet);
-        return birtRenderer.render(configuration.getProperties().getReport().getFile().getInputStream(), outputFormat, params);
+        return flexRenderer.render(configuration.getProperties().getReport().getFile().getInputStream(), outputFormat, params);
     }
 
     @GET

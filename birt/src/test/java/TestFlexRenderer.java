@@ -55,8 +55,8 @@ public class TestFlexRenderer extends AbstractRenderer {
     }
 
     @Test
-    public void testFlexRendererPropertyOutputFile() {
-        assertTrue(configuration.getProperties().getOutputFile().getPath() + " != out/flex/test", configuration.getProperties().getOutputFile().getPath().equals("out/flex/test"));
+    public void testFlexRendererPropertyOutputPath() {
+        assertTrue(configuration.getProperties().getOutputPath() + " != out", configuration.getProperties().getOutputPath().toString().equals("out"));
     }
 
     @Test

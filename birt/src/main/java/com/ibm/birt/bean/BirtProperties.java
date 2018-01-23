@@ -28,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +46,8 @@ public class BirtProperties {
     /**
      * the path where the report will be rendered to
      */
-    private File outputFile;
+    private Path outputPath;
+
     @Valid
     private Report report;
 

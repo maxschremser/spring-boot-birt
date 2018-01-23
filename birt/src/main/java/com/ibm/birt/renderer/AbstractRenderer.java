@@ -26,7 +26,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @Slf4j
@@ -46,7 +48,8 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    public void render(InputStream inputStream, File outputFile, BirtProperties.OutputFormat outputFormat, Map<String, String> params) throws Exception {
+    public void render(InputStream inputStream, Path outputPath, BirtProperties.OutputFormat outputFormat, Map<String, String> params) throws Exception {
+        File outputFile = new File(outputPath.toFile(), UUID.randomUUID() + "." + outputFormat.name());
         if (!outputFile.getName().matches("^.*\\.(pdf|htm|html|txt|doc|docx)$"))
             outputFile = new File(outputFile.getParentFile(), outputFile.getName() + "." + getFileEnding(outputFormat));
         if (!outputFile.getParentFile().exists())

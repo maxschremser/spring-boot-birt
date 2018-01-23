@@ -56,8 +56,8 @@ public class TestBirtRenderer extends AbstractRenderer {
     }
 
     @Test
-    public void testBirtRendererPropertyOutputFile() {
-        assertTrue(configuration.getProperties().getOutputFile().getPath() + " != out/birt/test", configuration.getProperties().getOutputFile().getPath().equals("out/birt/test"));
+    public void testBirtRendererPropertyOutputPath() {
+        assertTrue(configuration.getProperties().getOutputPath() + " != out", configuration.getProperties().getOutputPath().toString().equals("out"));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class TestBirtRenderer extends AbstractRenderer {
         renderOutputFormat(renderer, configuration, BirtProperties.OutputFormat.MS_WORD);
     }
 
-    @Test(expected = UnsupportedFormatException.class)
+    @Test
     public void testBirtRendererRenderText() throws Exception {
         renderOutputFormat(renderer, configuration, BirtProperties.OutputFormat.TEXT);
     }
