@@ -22,7 +22,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BirtApplication {
     public static void main(String[] args) {
-        new SpringApplication(BirtApplication.class).run(args);
+        SpringApplication.run(BirtApplication.class, args);
         // SpringApplication app = new SpringApplication(BirtApplication.class);
         // ConfigurableApplicationContext ctx = app.run(args);
         // ctx.getBean(BirtProcessor.class).renderReport();
